@@ -22,8 +22,8 @@ export class SignupComponent {
       '',
       [
         Validators.required,
-        Validators.minLength(8),
-        Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/),
+        Validators.minLength(4),
+        //Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/),
       ],
     ],
   });
@@ -34,9 +34,19 @@ export class SignupComponent {
     if (this.signupForm.valid) {
       const { email, password } = this.signupForm.value;
       this.authService.signup(email!, password!).subscribe({
-        next: () => this.router.navigate(['/dashboard']),
-        error: (err) => {
-          this.errorMessage = err.error?.message || 'Registration failed';
+        next: (response) => {
+          console.log('Signup successful:', response);
+          this.router.navigate(['/auth/login']);
+        },
+        error: (error) => {
+          console.error('Signup error in component:', error);
+          if (error.status === 500) {
+            this.errorMessage = 'Server error occurred. Please try again.';
+          } else if (error.error?.message) {
+            this.errorMessage = error.error.message;
+          } else {
+            this.errorMessage = 'An unexpected error occurred';
+          }
         },
       });
     }

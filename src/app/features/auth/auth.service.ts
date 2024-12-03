@@ -21,9 +21,20 @@ export class AuthService {
       .post<User>(
         `${this.apiUrl}/signin`,
         { email, password },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // observe: 'response', 
+        }
       )
-      .pipe(tap((user) => this.user$.next(user)));
+      .pipe(
+        tap((user) => this.user$.next(user)),
+        tap({
+          error: (error) => console.error('Signup error:', error),
+        })
+      );
   }
 
   signup(email: string, password: string) {
