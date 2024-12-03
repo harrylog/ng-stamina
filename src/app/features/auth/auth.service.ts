@@ -18,13 +18,21 @@ export class AuthService {
 
   login(email: string, password: string) {
     return this.http
-      .post<User>(`${this.apiUrl}/signin`, { email, password })
+      .post<User>(
+        `${this.apiUrl}/signin`,
+        { email, password },
+        { withCredentials: true }
+      )
       .pipe(tap((user) => this.user$.next(user)));
   }
 
   signup(email: string, password: string) {
     return this.http
-      .post<User>(`${this.apiUrl}/signup`, { email, password })
+      .post<User>(
+        `${this.apiUrl}/signup`,
+        { email, password },
+        { withCredentials: true }
+      )
       .pipe(tap((user) => this.user$.next(user)));
   }
 

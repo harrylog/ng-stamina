@@ -20,6 +20,11 @@
 
       <button type="submit" [disabled]="signupForm.invalid">Sign Up</button>
       <a routerLink="/auth/login">Already have an account? Login</a>
+
+      @if (errorMessage) {
+        <div class="error-message">{{ errorMessage }}</div>
+      }
+
     </form>
   </div>
 `,

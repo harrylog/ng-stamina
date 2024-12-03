@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -10,17 +11,26 @@ import { Router } from '@angular/router';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  errorMessage = '';
+
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   });
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(private fb: FormBuilder) {}
 
   onSubmit() {
     if (this.loginForm.valid) {
-      // TODO: Implement auth service integration
-      console.log(this.loginForm.value);
+      const { email, password } = this.loginForm.value;
+      this.authService.login(email!, password!).subscribe({
+        next: () => this.router.navigate(['/dashboard']),
+        error: (err) => {
+          this.errorMessage = err.error?.message || 'Login failed';
+        },
+      });
     }
   }
 }
